@@ -6,7 +6,7 @@ typedef enum {
   BUTTON_UP,
   BUTTON_FALLING,
   BUTTON_DOWN,
-  BUTTON_RAISING
+  BUTTON_RISING
 } debounceState_t;
 
 debounceState_t currentState;
@@ -20,6 +20,7 @@ void buttonReleased(void);
 void setup() {
   pinMode(LEDPIN, OUTPUT);
   pinMode(BUTTONPIN, INPUT);
+  Serial.begin(9600);
   debounceFSM_init();
 }
 
@@ -37,6 +38,7 @@ void debounceFSM_update(void) {
   
   switch (currentState) {
     case BUTTON_UP:
+      Serial.println("BOTTON UP");
       if (!digitalRead(BUTTONPIN)){
         currentState = BUTTON_FALLING;
         lastTime = millis();
@@ -44,6 +46,7 @@ void debounceFSM_update(void) {
       break;
 
     case BUTTON_FALLING:
+      Serial.println("BOTTON FALLING");
       if (millis() - lastTime >= RETARDO) {
         if (!digitalRead(BUTTONPIN)){
           buttonPressed();
@@ -53,13 +56,15 @@ void debounceFSM_update(void) {
       break;
 
     case BUTTON_DOWN:
+      Serial.println("BOTTON DOWN");
       if (digitalRead(BUTTONPIN)) {
-        currentState = BUTTON_RAISING;
+        currentState = BUTTON_RISING;
         lastTime = millis();
       }
       break;
 
-    case BUTTON_RAISING:
+    case BUTTON_RISING:
+      Serial.println("BOTTON RISING");
       if (millis() - lastTime >= RETARDO) {
         if (digitalRead(BUTTONPIN)) {
           buttonReleased();
