@@ -2,6 +2,8 @@
 #define LEDPIN 13
 #define BUTTONPIN 8
 
+// link to tinkercad proyect https://www.tinkercad.com/things/fYhpRySFNUv-mef22
+
 typedef enum {
   BUTTON_UP,
   BUTTON_FALLING,
