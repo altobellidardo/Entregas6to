@@ -1,6 +1,8 @@
 #define DEBOUNCE_DELAY 40
 #define LEDPIN 13
 #define BUTTONPIN 8
+#define SYSTEM_DELAY 10
+#define NUMS_LIM 15
 
 // link to tinkercad proyect https://www.tinkercad.com/things/fYhpRySFNUv-mef22
 
@@ -10,6 +12,26 @@ typedef enum {
   BUTTON_DOWN,
   BUTTON_RISING
 } debounceState_t;
+
+const char OUTPUTS[] = {
+  B11111100,
+  B01100000,
+  B11011010,
+  B11110010,
+  B01100110,
+  B10110110,
+  B10111110,
+  B11100000,
+  B11111110,
+  B11100110,
+  B11111010,
+  B00111110,
+  B10011100,
+  B01111010,
+  B10011110,
+  B10001110
+};
+
 
 debounceState_t currentState;
 
@@ -21,7 +43,7 @@ void buttonReleased(void);
 
 void setdisplay(int);
 
-int contador = 0;
+int counter = 0;
 
 void setup() {
   pinMode(LEDPIN, OUTPUT);
@@ -35,8 +57,8 @@ void setup() {
 
 void loop() {
   debounceFSM_update();
-  setdisplay(contador);
-  delay(10);
+  setdisplay(counter);
+  delay(SYSTEM_DELAY);
 }
 
 void debounceFSM_init(void) {
@@ -87,8 +109,8 @@ void debounceFSM_update(void) {
 
 void buttonPressed(void) {
   digitalWrite(LEDPIN, HIGH);
-  if (contador < 15) contador++;
-  else contador = 0;
+  if (counter < NUMS_LIM) counter++;
+  else counter = 0;
 }
 
 void buttonReleased(void) {
@@ -96,26 +118,5 @@ void buttonReleased(void) {
 }
 
 void setdisplay(int num){
-
-  static char OUTPUTS[16] = {
-    B11111100,
-    B01100000,
-    B11011010,
-    B11110010,
-    B01100110,
-    B10110110,
-    B10111110,
-    B11100000,
-    B11111110,
-    B11100110,
-    B11101110,
-    B00111110,
-    B10011100,
-    B01111010,
-    B10011110,
-    B10001110
-  };
-
   PORTD = OUTPUTS[num];
-
 }
