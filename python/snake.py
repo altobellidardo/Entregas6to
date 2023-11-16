@@ -1,19 +1,21 @@
 import pygame, random
 pygame.init()
 
-ancho = 800
-alto = 600
+ANCHO = 800
+ALTO = 600
 
 hiscore = 0
 forma = 0
 tramaselec = 1
 
-wn = pygame.display.set_mode((ancho,alto))
+wn = pygame.display.set_mode((ANCHO,ALTO))
 pygame.display.set_caption('Snake by Dardo')
 clock = pygame.time.Clock()
-#fuente = pygame.font.SysFont("comicsansms", 23)  #-     #elegir entre 3 fuentes
-fuente = pygame.font.SysFont("bahnschrift", 24)   #-
-fuente2 = pygame.font.Font(None, 30)              #-
+
+# #elegir entre 3 fuentes
+#fuente = pygame.font.SysFont("comicsansms", 23)
+fuente = pygame.font.SysFont("bahnschrift", 24)
+fuente2 = pygame.font.Font(None, 30)              
 
 def trama_secue(textura, mode):
 	if mode == 1:
@@ -41,52 +43,55 @@ def trama_secue(textura, mode):
 
 def trama_rand():
 	proba = random.random()
-	if proba<=0.3:
+	if proba<=.3:
 		return "#A4D4BF"
-	elif proba>0.3 and proba<=0.6:
+	elif proba>.3 and proba<=.6:
 		return "#6E9E89"
-	elif proba>0.6:
+	elif proba>.6:
 		return "#2ACE86"
 
 def trama_igual():
 	return "#58D68D"
 
 def ojos(direction, snake):
-	if direction == "":
+	if direction == None:
 		pygame.draw.rect(wn,"red",(snake.position[0]+3,snake.position[1]+7, 6,6))
 		pygame.draw.rect(wn,"red",(snake.position[0]+11,snake.position[1]+7, 6,6))
-	if direction == "up":
+	elif direction == "up":
 		pygame.draw.rect(wn,"red",(snake.position[0]+3,snake.position[1], 6,6))
 		pygame.draw.rect(wn,"red",(snake.position[0]+11,snake.position[1], 6,6))
-	if direction == "down":
+	elif direction == "down":
 		pygame.draw.rect(wn,"red",(snake.position[0]+3,snake.position[1]+14, 6,6))
 		pygame.draw.rect(wn,"red",(snake.position[0]+11,snake.position[1]+14, 6,6))
-	if direction == "left":
+	elif direction == "left":
 		pygame.draw.rect(wn,"red",(snake.position[0],snake.position[1]+3, 6,6))
 		pygame.draw.rect(wn,"red",(snake.position[0],snake.position[1]+11, 6,6))
-	if direction == "right":
+	elif direction == "right":
 		pygame.draw.rect(wn,"red",(snake.position[0]+14,snake.position[1]+3, 6,6))
 		pygame.draw.rect(wn,"red",(snake.position[0]+14,snake.position[1]+11, 6,6))
 
 def verhiscore(score):
 	global hiscore, newhiscore
-	if score>hiscore:
+	if score > hiscore:
 		hiscore = score
 		newhiscore = True
+
 def lineas():       #traza cuadricula por cada "pixel"
-	for x in range(0,ancho,20):
-		pygame.draw.line(wn,"blue",(x,0),(x,alto))
-	for y in range(0,alto,20):
-		pygame.draw.line(wn,"blue",(0,y),(ancho,y))
+	for x in range(0,ANCHO,20):
+		pygame.draw.line(wn,"blue",(x,0),(x,ALTO))
+	for y in range(0,ALTO,20):
+		pygame.draw.line(wn,"blue",(0,y),(ANCHO,y))
 
 class Snake():
 	def __init__(self, color):
-		self.position = [ancho/2,alto/2]         #inicia en el medio
+		# inicia en el medio
+		self.position = [ANCHO/2,ALTO/2]
 		self.color = color
 
 class Apple():
 	def __init__(self):
-		self.position = [random.randint(0,39)*20, random.randint(0,19)*20]   #dividido en cuadricula para alinear con snake
+		# dividido en cuadricula para alinear con snake
+		self.position = [random.randint(0,39)*20, random.randint(0,19)*20]
 	def nuevaposi(self):
 		self.position = [random.randint(0,39)*20, random.randint(0,19)*20]
 
@@ -102,10 +107,12 @@ def gameLoop():
 	speed = 20    # avanza 1 cuadrado
 
 	longitud = [snake]
-	direction = ""         #para que no vuelva para atras / que no tome el sentido contrario 
+	# para que no vuelva para atras / que no tome el sentido contrario 
+	direction = None
 
 	textura = 1
-	score = 0     # score se puede remplazar por num_segmen-1
+	# score se puede remplazar por num_segmen-1
+	score = 0 
 	newhiscore = False
 	x_speed = 0
 	y_speed = 0
@@ -163,7 +170,8 @@ def gameLoop():
 				nuevo = Snake(trama_igual())
 			longitud.append(nuevo)
 
-		if snake.position[0]< 0 or snake.position[0]>= 800:   #si choca con los bordes en X y en Y
+		# si choca con los bordes en X y en Y
+		if snake.position[0]< 0 or snake.position[0]>= 800:
 			game_over = True
 			outgame = True
 		if snake.position[1]< 0 or snake.position[1]>= 600:
@@ -171,34 +179,42 @@ def gameLoop():
 			outgame = True
 		
 		wn.fill("black")
-		#lineas()
+		# lineas()
 
-		num_segmen = len(longitud)           #hace el trazo de todo el cuerpo por cada segmento
+		# hace el trazo de todo el cuerpo por cada segmento
+		num_segmen = len(longitud)
 		for v in range(num_segmen-1,0,-1):
 			longitud[v].position[0] = longitud[v-1].position[0]
 			longitud[v].position[1] = longitud[v-1].position[1]
 			pygame.draw.rect(wn, longitud[v].color, (longitud[v].position[0],longitud[v].position[1], 20,20))
 
-		snake.position[0]+= x_speed  #avanza en X y en Y segun tecla
+		# avanza en X y en Y segun tecla
+		snake.position[0]+= x_speed
 		snake.position[1]+= y_speed	
 
-		for x in range(1, num_segmen):   #si choca contra su propio cuerpo
+		# si choca contra su propio cuerpo
+		for x in range(1, num_segmen):
 			if snake.position == longitud[x].position:
 				game_over = True
 				outgame = True
 
-		for x in range(1, num_segmen):   #si la manzana aparece en el cuerpo que vuelva a aparecer
+		# si la manzana aparece en el cuerpo que vuelva a aparecer
+		for x in range(1, num_segmen):
 			if apple.position == longitud[x].position:
 				print("aparecio en el cuerpo")
 				apple.nuevaposi()
 
 		if forma == 0:
-			pygame.draw.circle(wn, "red",  (apple.position[0]+10, apple.position[1]+10),10)  #manzana en circulo
+			# manzana en circulo
+			pygame.draw.circle(wn, "red",  (apple.position[0]+10, apple.position[1]+10),10)
 		if forma == 1:
-			pygame.draw.rect(wn, "red",   (apple.position[0],apple.position[1], 20,20))     #manzana en rectangulo
+			# manzana en rectangulo
+			pygame.draw.rect(wn, "red",   (apple.position[0],apple.position[1], 20,20))
 
-		pygame.draw.rect(wn, "green", (snake.position[0],snake.position[1], 20,20))      #la cabeza
+		# hace el trazo de la cabeza
+		pygame.draw.rect(wn, "green", (snake.position[0],snake.position[1], 20,20))
 		
+		# dibuja los ojos
 		ojos(direction, snake)
 
 		verhiscore(score)
@@ -210,22 +226,24 @@ def gameLoop():
 		wn.blit(txt_score_now,(5,5))
 
 		pygame.display.update()
-		clock.tick(10)     #fps
+		# fps
+		clock.tick(10)
 
-	while outgame:     #menu cuando perdas 
+	# menu cuando perdas 
+	while outgame:
 		wn.fill("white")
 
 		texto = fuente.render("Perdiste, presiona C para volver a jugar o Q para salir", True, "red")
-		txt_score = fuente.render("Tu puntaje fue: "+str(score)+" puntos", True, "red")
+		txt_score = fuente.render("Tu puntaje fue: " + str(score) + " puntos", True, "red")
 		if newhiscore:
 			txt_hiscore = fuente.render("Tu puntaje máximo fue: "+str(hiscore)+" puntos", True, "green")
 		else:
 			txt_hiscore = fuente.render("Tu puntaje máximo fue: "+str(hiscore)+" puntos", True, "red")
-		wn.blit(texto,(110,alto/2-50))
-		wn.blit(txt_score,(ancho/2-130,alto/2-20))
-		wn.blit(txt_hiscore,(ancho/2-170,alto/2+10))
-		wn.blit(fuente.render("G para cambiar la forma de la manzana",0,"red"),(ancho/2-200,alto/2+90))
-		wn.blit(fuente.render("H para cambiar la trama de la serpiente",0,"red"),(ancho/2-200,alto/2+110))
+		wn.blit(texto,(110,ALTO/2-50))
+		wn.blit(txt_score,(ANCHO/2-130,ALTO/2-20))
+		wn.blit(txt_hiscore,(ANCHO/2-170,ALTO/2+10))
+		wn.blit(fuente.render("G para cambiar la forma de la manzana",0,"red"),(ANCHO/2-200,ALTO/2+90))
+		wn.blit(fuente.render("H para cambiar la trama de la serpiente",0,"red"),(ANCHO/2-200,ALTO/2+110))
 		if forma == 0:
 			wn.blit(fuente.render("circulo",True,"red"),(0,0))
 		else:
