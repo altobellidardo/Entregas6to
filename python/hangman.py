@@ -1,57 +1,54 @@
 import random
 
-# Lista de palabras para el juego del Ahorcado
-listaPalabras = ["python", "ahorcado", "programación", "desafío", "conocimiento", "algoritmo"]
 
-# Función para elegir una palabra al azar de la lista
-def elegirPalabra(listaPalabras):
-    return random.choice(listaPalabras)
+def seleccionar_palabra():
+    palabras = ["python", "programacion", "computadora", "tecnologia", "inteligencia"]
+    return random.choice(palabras)
 
-# Función para inicializar el juego
-def inicializarJuego():
-    palabra = elegirPalabra(listaPalabras)
-    palabra = palabra.lower()
-    letrasPalabra = set(palabra)
-    letrasAdivinadas = set()
-    intentos = 6
-    return palabra, letrasPalabra, letrasAdivinadas, intentos
-
-# Función para mostrar el estado actual de la palabra con las letras adivinadas
-def mostrarPalabra(palabra, letrasAdivinadas):
-    mostrar = ""
+def mostrar_tablero(palabra, letras_adivinadas):
+    tablero = ""
     for letra in palabra:
-        if letra in letrasAdivinadas:
-            mostrar += letra
+        if letra in letras_adivinadas:
+            tablero += letra + " "
         else:
-            mostrar += "_"
-    return mostrar
+            tablero += "_ "
+    return tablero
 
-# Función para jugar el juego
-def jugarAhorcado():
-    print("¡Bienvenido al juego del Ahorcado!")
-    palabra, letrasPalabra, letrasAdivinadas, intentos = inicializarJuego()
-    
-    while intentos > 0:
-        mostrarActual = mostrarPalabra(palabra, letrasAdivinadas)
-        print(f"Palabra: {mostrarActual}")
-        print(f"Intentos restantes: {intentos}")
-        
-        adivinanza = input("Adivina una letra: ").lower()
-        
-        if adivinanza in letrasAdivinadas:
-            print("Ya has adivinado esa letra.")
-        elif adivinanza in letrasPalabra:
-            letrasAdivinadas.add(adivinanza)
-            if letrasPalabra == letrasAdivinadas:
-                print("¡Felicidades! Has adivinado la palabra:", palabra)
-                break
+def todas_letras_adivinadas(palabra, letras_adivinadas):
+    for letra in palabra:
+        if letra not in letras_adivinadas:
+            return False
+    return True
+
+def jugar_ahorcado():
+    palabra_secreta = seleccionar_palabra()
+    letras_adivinadas = []
+    intentos_maximos = 6
+    intentos_realizados = 0
+
+    while intentos_realizados < intentos_maximos:
+        print("\n" + mostrar_tablero(palabra_secreta, letras_adivinadas))
+
+        if todas_letras_adivinadas(palabra_secreta, letras_adivinadas):
+            print("¡Felicidades! Has adivinado la palabra.")
+            break
+
+        letra = input("Ingresa una letra: ").lower()
+
+        if letra.isalpha() and len(letra) == 1:
+            if letra in letras_adivinadas:
+                print("Ya has ingresado esa letra. Intenta con otra.")
+            elif letra in palabra_secreta:
+                letras_adivinadas.append(letra)
+                print("¡Correcto! Has adivinado una letra.")
+            else:
+                intentos_realizados += 1
+                print("Incorrecto. Te quedan", (intentos_maximos - intentos_realizados), "intentos.")
         else:
-            letrasAdivinadas.add(adivinanza)
-            intentos -= 1
+            print("Por favor, ingresa una letra válida.")
 
-    if intentos == 0:
-        print("Te has quedado sin intentos. La palabra era:", palabra)
+    if intentos_realizados == intentos_maximos:
+        print("¡Perdiste! La palabra secreta era '{}'.".format(palabra_secreta))
 
-# Ejecuta el juego
 if __name__ == "__main__":
-    jugarAhorcado()
+    jugar_ahorcado()
